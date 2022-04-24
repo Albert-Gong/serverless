@@ -102,9 +102,11 @@ export default defineComponent({
         reader.onload = (event: any) => {
           let file_content = event.target.result
 
+
           let ak = 'VFQ6DYBAKATE373J1OSX'
           let sk = 'r97RMrH2xqEbYSSoDR43OEtMgAdSu6AmuPPCMiQg'
           let server = 'https://obs.cn-north-4.myhuaweicloud.com'
+
 
           let obsClient = new ObsClient({
             access_key_id: ak,
@@ -154,7 +156,6 @@ export default defineComponent({
                           // console.log('Download Path:');
                           dynamic_download_url.value = result.InterfaceResult.Content.SignedUrl
                           // console.log();
-
                         }
                       }
                     })

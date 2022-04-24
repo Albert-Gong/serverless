@@ -5,6 +5,7 @@
  */
 
 import museum from "@/assets/images/museum.png"
+
 const services = [
     {
         name: "Preprocess",
@@ -25,7 +26,43 @@ const services = [
     }
 ]
 
+
+let  token_data =
+    {
+        "auth":
+            {
+                "identity":
+                    {
+                        "password":
+                            {
+                                "user":
+                                    {
+                                        "domain":
+                                            {
+                                                "name": "1"
+
+                                            },
+                                        "name": "2",
+                                        "password": "3"
+                                    }
+                            },
+                        "methods": ["password"]
+                    },
+                "scope":
+                    {
+                        "project":
+                            {
+                                "name": "cn-north-4"
+                            }
+                    }
+            }
+    }
+
+
 export
 {
     services,
+    token_data
 }
+
+

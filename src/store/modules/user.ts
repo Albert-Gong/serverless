@@ -5,6 +5,8 @@
  */
 
 import {ActionContext} from 'vuex'
+import {analyse_sentiment, requestToken} from "../../apis/user";
+import {token_data} from "@/utils/basic"
 
 export interface userState {
     token: string,
@@ -86,9 +88,9 @@ const actions = {
             commit("changeAk", params.input_ak)
             commit("changeSk", params.input_sk)
             commit("changeServer", params.input_server)
-            commit("changeUser", params.input_user)
-            commit("changeName", params.input_name)
-            commit("changePw", params.input_pw)
+            commit("changeToken", params.input_token)
+            // commit("changeName", params.input_name)
+            // commit("changePw", params.input_pw)
             resolve("OK")
         })
     },
@@ -97,17 +99,23 @@ const actions = {
             commit("changeAk", "")
             commit("changeSk", "")
             commit("changeServer", "")
-            commit("changeUser", "")
-            commit("changeName", "")
-            commit("changePw", "")
+            commit("changeToken", "")
+            // commit("changeName", "")
+            // commit("changePw", "")
             resolve("OK")
         })
     },
-    requestToken({commit, dispatch}: ActionContext<userState, userState>) {
-        return new Promise((resolve, reject) => {
-
-        })
-    },
+    // requestToken({commit, dispatch}: ActionContext<userState, userState>, params:any) {
+    //     return new Promise((resolve, reject) => {
+    //
+    //         token_data["auth"]["identity"]["password"]["user"]["domain"]["name"] = params["input_user"]
+    //         token_data["auth"]["identity"]["password"]["user"]["name"] = params["input_name"]
+    //         token_data["auth"]["identity"]["password"]["user"]["password"] = params["input_pw"]
+    //         analyse_sentiment().then(res => {
+    //             console.log(res)
+    //         })
+    //     })
+    // },
 }
 
 export default {

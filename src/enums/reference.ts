@@ -10,8 +10,8 @@ import museum from "@/assets/images/museum.png"
 const reference_apis = [
     {
         api_id: 0,
-        api_name: "Model 1",
-        api_des: "Sentiment analysis",
+        api_name: "Sentiment Analysis",
+        api_des: "The Sentiment analysis model is used to analyse the tone of give texts",
         image: museum
     },
     {

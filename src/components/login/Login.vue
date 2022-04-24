@@ -51,41 +51,12 @@
 
     <div class="row-container">
       <div class="prefix">
-        User
+        Token
       </div>
       <div class="input-box">
         <el-input
             size="default"
-            v-model="input_user"
-            type="password"
-            placeholder="input secret key"
-        ></el-input>
-      </div>
-    </div>
-
-    <div class="row-container">
-      <div class="prefix">
-        Name
-      </div>
-      <div class="input-box">
-        <el-input
-            size="default"
-            v-model="input_name"
-            type="password"
-            placeholder="input secret key"
-        ></el-input>
-      </div>
-    </div>
-
-    <div class="row-container">
-      <div class="prefix">
-        Password
-      </div>
-      <div class="input-box">
-        <el-input
-            size="default"
-            v-model="input_pw"
-            type="password"
+            v-model="input_token"
             placeholder="input secret key"
         ></el-input>
       </div>
@@ -110,6 +81,7 @@
 import {defineComponent, ref, computed} from 'vue'
 import {useStore} from 'vuex';
 import {useRouter} from "vue-router";
+import {analyse_sentiment} from "../../apis/user";
 // import Logo from "@/components/logo/Logo.vue";
 
 
@@ -126,26 +98,26 @@ export default defineComponent({
     let input_ak = ref("")
     let input_sk = ref("")
     let input_server = ref("")
-    let input_user = ref("")
-    let input_name = ref("")
-    let input_pw = ref("")
+    let input_token = ref("")
 
     const name = computed(() => store.getters['user/getName'])
 
     let saveConfiguration = () => {
       let data = {
-        "input_ak": input_ak,
-        "input_sk": input_sk,
-        "input_server": input_server,
-        "input_user": input_user,
-        "input_name": input_name,
-        "input_pw": input_pw
+        "input_ak": input_ak.value,
+        "input_sk": input_sk.value,
+        "input_server": input_server.value,
+        "input_token": input_token.value,
       }
       store.dispatch("user/configure", data).then(res => {
-        console.log(res)
-        store.dispatch('user/getToken').then(res=>{
+        console.log("ok", data)
+        analyse_sentiment("I am superman").then(res => {
           console.log(res)
         })
+
+        // store.dispatch('user/requestToken', data).then(res=>{
+        //   console.log(res)
+        // })
       }).catch(err => console.log(err));
     }
 
@@ -166,9 +138,8 @@ export default defineComponent({
       input_ak,
       input_sk,
       input_server,
-      input_user,
-      input_name,
-      input_pw,
+      input_token,
+
       name,
       saveConfiguration,
       resetConfiguration,

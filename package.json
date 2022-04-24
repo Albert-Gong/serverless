@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
+    "@huaweicloud/huaweicloud-sdk-core": "^3.0.37-rc",
     "blueimp-md5": "^2.19.0",
     "element-plus": "^2.1.10",
     "esdk-obs-nodejs": "^3.21.6",
