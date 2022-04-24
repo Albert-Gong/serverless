@@ -20,7 +20,9 @@
       </div>
     </div>
 
+    <el-link class="link" @click="jumpToPage('login')">Back</el-link>
   </div>
+
 </template>
 
 <script>
@@ -29,7 +31,9 @@ import {useRouter} from "vue-router"
 
 export default defineComponent({
   name: 'Navigation',
+  components:{
 
+  },
   setup() {
 
     let router = useRouter()
@@ -46,6 +50,7 @@ export default defineComponent({
       default_option.value[index] = !default_option.value[index];
 
     }, {immediate: true})
+
 
     let jumpToPage = (view) => {
 
@@ -78,7 +83,9 @@ export default defineComponent({
     margin: 0 auto;
     display: flex;
     justify-self: center;
-
+  }
+  .link{
+    margin-right: 20px;
   }
 
   .default-option {

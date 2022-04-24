@@ -11,13 +11,18 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/:currentPath(.*)*', // the router is not matched
         redirect: (_) => {
-            return {path: '/serverlessCenter'}
+            return {path: '/login'}
         },
+    },
+    {
+        path: "/login",
+        name: "login",
+        component: ()=>import("@/views/login/Login.vue")
     },
     {
         path: '',
         redirect: (_) => {
-            return {path: '/serverlessCenter'}
+            return {path: '/login'}
         },
     },
     {

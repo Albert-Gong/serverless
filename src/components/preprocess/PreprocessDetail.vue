@@ -6,16 +6,16 @@
 <template>
   <div id="preprocess-detail-container">
     <div class="detail-des-container">
-      <div class="api-name">
-        API
-      </div>
+      <h3 class="api-name">
+        {{ detail.api_name }}
+      </h3>
       <p class="api-des">
-        API Des
+        {{ detail.api_des }}
       </p>
     </div>
     <div class="upload-download-container">
       <div class="upload-container">
-        <div class="caption">Upload a .CSV File</div>
+        <div class="caption">Please upload a file</div>
         <el-upload
             action=""
             class="uploader"
@@ -37,12 +37,16 @@
             </div>
           </template>
         </el-upload>
-      </div>
+        <div class="link-container">
+          <el-link :href="dynamic_download_url" rel="external nofollow" class="link">download data</el-link>
 
+        </div>
+
+      </div>
 
       <div class="content-container">
         <el-input v-model="res_text" type="textarea" placeholder="Waiting an answer"
-                  :autosize="{minRows: 5, maxRows: 20}" :style="{width: '100%'}"></el-input>
+                  :autosize="{minRows: 12, maxRows: 25}" :style="{width: '100%'}"></el-input>
       </div>
     </div>
 
@@ -56,6 +60,7 @@ import type {UploadInstance, UploadProps, UploadRawFile} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {ObsClient} from "../../huaweiobs/index"
 import {useStore} from "vuex"
+import {preprocess_apis} from "../../enums/preprocess";
 
 
 export default defineComponent({
@@ -64,14 +69,16 @@ export default defineComponent({
     let store = useStore();
     let route = useRoute();
     let p_id = ref(0);
+    let detail = ref({});
 
     let res_text = ref("");
+    let dynamic_download_url = ref("");
 
 
     onMounted(() => {
       let current_path = route.path;
       p_id.value = Number(current_path.split("/").pop())
-      // console.log(p_id)
+      detail.value = preprocess_apis.filter((e) => e.api_id == p_id.value)[0]
     })
 
 
@@ -127,16 +134,26 @@ export default defineComponent({
                       } else {
                         console.log('Status-->' + result.CommonMsg.Status);
                         if (result.CommonMsg.Status < 300 && result.InterfaceResult) {
-                          let content = result.InterfaceResult.Content;
-                          let numbers = []
-                          for (let i = 0; i < content.length; i++) {
-                            console.log(content[i])
-                          }
-                          console.log(result.InterfaceResult.Content);
                           res_text.value = result.InterfaceResult.Content
-                          // res_text.value =res_text.value.replace(/\n/g,"<br/>")
 
-                          // file_list.value = res_text.value
+                        }
+                      }
+                    })
+                  })();
+                  (() => {
+                    obsClient.getObject({
+                      Bucket: 'serverless-preprocess-stage-1',
+                      Key: file.name,
+                      SaveByType: 'file'
+                    }, function (err, result) {
+                      if (err) {
+                        console.error('Error-->' + err);
+                      } else {
+                        console.log('Status-->' + result.CommonMsg.Status);
+                        if (result.CommonMsg.Status < 300 && result.InterfaceResult) {
+                          // console.log('Download Path:');
+                          dynamic_download_url.value = result.InterfaceResult.Content.SignedUrl
+                          // console.log();
 
                         }
                       }
@@ -159,6 +176,8 @@ export default defineComponent({
       p_id,
       file_list,
       res_text,
+      detail,
+      dynamic_download_url,
       handleExceed,
       submitUpload,
     }
@@ -173,15 +192,26 @@ export default defineComponent({
   min-height: 400px;
   background-color: $container_color;
   border-radius: 10px;
-  padding: 10px;
+  padding: 10px 20px;
 
   .detail-des-container {
     display: flex;
     flex-direction: column;
 
-    div, p {
+    .api-name, .api-des {
+      margin: 0px;
       text-align: left;
     }
+
+    .api-des {
+      height: 36px;
+      font-size: 16px;
+      line-height: 16px;
+      color: grey;
+      margin-bottom: 10px;
+    }
+
+
   }
 
   .upload-download-container {
@@ -190,7 +220,7 @@ export default defineComponent({
     min-height: 200px;
 
     .upload-container {
-      flex: 0 1 300px;
+      flex: 0 1 250px;
       display: flex;
       flex-direction: column;
       align-items: left;
@@ -217,6 +247,15 @@ export default defineComponent({
             margin-top: 20px;
           }
         }
+      }
+
+      .link-container {
+        display: flex;
+        flex-display: row;
+        text-align: left;
+        //&:hover{
+        //  cursor: pointer;
+        //}
       }
     }
 

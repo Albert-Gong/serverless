@@ -7,7 +7,10 @@
   <div id="overview-container" @click="goToService">
     <img :src="service.image" alt="image" class="image"/>
     <div class="content-container">
-      <h2>{{ service.name }}</h2>
+      <h3 class="service-name">{{ service.name }}</h3>
+      <div class="service-des">
+        {{service.description}}
+      </div>
     </div>
 
   </div>
@@ -25,8 +28,6 @@ export default defineComponent({
     }
   },
   setup() {
-    // let image_src = this.service.image;
-    // console.log(image_src)
 
     let goToService = function () {
       console.log(this.service)
@@ -62,7 +63,17 @@ export default defineComponent({
     width: 100%;
     margin-left: 20px;
     height: 150px;
-    border: 1px solid red;
+    display: flex;
+    flex-direction: column;
+    .service-name{
+      margin: 0px;
+    }
+    .service-des{
+      margin: 0px;
+      flex: 1 0 100px;
+      text-align: left;
+
+    }
   }
 
 }

@@ -10,11 +10,6 @@ import {userState} from "@/store/modules/user";
 
 const files = import.meta.globEager('./modules/*.ts')
 
-
-// commit 和 dispatch 是调用 mutation 的两种方法
-// commit 同步操作
-// dispatch 异步操作
-
 export interface RootState {
     user: userState,
 }

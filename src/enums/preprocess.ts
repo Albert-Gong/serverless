@@ -10,7 +10,7 @@ const preprocess_apis = [
     {
         api_id: 0,
         api_name: "Normalize",
-        api_des: "This api is used to do something, This api is used to do something, This api is used to do something",
+        api_des: "This api is used to normalize data",
         image: museum
     },
     {
