@@ -1,28 +1,6 @@
 from obs import *
 import numpy as np
-
-def nor_norm(localFile):
-
-    array = np.loadtxt(open(localFile, "rb"), delimiter=",", skiprows=0)
-    data_shape = array.shape
-    data_rows = data_shape[0]
-    data_cols = data_shape[1]
-    t = np.empty((data_rows, data_cols))
-    for i in range(data_cols):
-        sum = 0
-        for j in range(data_rows):
-            sum += array[j, i]
-        avg = sum / data_rows
-        sum_sq = 0
-        for j in range(data_rows):
-            sq = (array[j, i] - avg) ** 2
-            sum_sq += sq
-        std_deviation = (sum_sq / data_rows) ** 0.5
-        # 计算标准化结果
-        for j in range(data_rows):
-            t[j, i] = (array[j, i] - avg) / std_deviation
-
-    np.savetxt(localFile, t, delimiter=",")
+from utils import *
 
 def newObsClient(params):
     ak = params["ak"]
@@ -74,6 +52,36 @@ def getObjInfoFromObsEvent(event):
     return bucket, objName
 
 
+def decode_file(localFile):
+    raw_data = []
+    with open(localFile, 'r') as reader:
+        for line in reader.readlines():
+            line = line.strip()
+            if line:
+                raw_data.append(line)
+    str_control = raw_data[0].strip()
+    str_data = raw_data[1:]
+
+    str_control = str_control.split(',')
+    print(str_control)
+
+    params = []
+    if len(str_control[1]) > 0:
+        params = list(map(lambda x: int(x), str_control[1:]))
+
+    control = {
+        'cmd': str_control[0],
+        'params': params
+    }
+
+    num_data = []
+    for line in str_data:
+        line = list(map(lambda x: float(x), line.split(',')))
+        num_data.append(line)
+    num_data = np.asarray(num_data, dtype=float)
+    return control, num_data
+
+
 def handler(event, context):
     bucketName, objName = getObjInfoFromObsEvent(event)
     print(f"bucket name {bucketName} obj name {objName}")
@@ -86,7 +94,7 @@ def handler(event, context):
     uploadBucket = "serverless-preprocess-stage-1"
 
     objectKey = objName
-    localFile = "/tmp/" +  objectKey
+    localFile = "/tmp/" + objectKey
 
     config = {
         "ak": ak,
@@ -105,11 +113,15 @@ def handler(event, context):
     print("Download file".center(50, "="))
     downloadFile(params=config)
 
-    print("Normalize".center(50, "="))
-    nor_norm(localFile)
+    control, data = decode_file(localFile)
+    print(f'control \n {control}')
+    print(f'data \n {data}')
+
+    func = func_mapper[control["cmd"]]
+    result = func(data, control["params"])
+    print(f'result \n {result}')
+
+    np.savetxt(localFile, result, delimiter=",", fmt='%.6f')
 
     print("Upload file".center(50, "="))
     uploadFile(params=config)
-
-    # objects = obsClient.listObjects(bucketName="serverless-preprocess")
-    # print(objects["body"])
