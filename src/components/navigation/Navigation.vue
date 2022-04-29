@@ -44,7 +44,6 @@ export default defineComponent({
     watch(() => router.currentRoute.value.name, (new_value, old_value) => {
       console.log(new_value)
       let dict = {"preprocess": 0, "aiReference": 1, "pipeline": 2, 'serverlessCenter':3}
-
       let index = dict[new_value];
       default_option.value = [true, true, true];
       default_option.value[index] = !default_option.value[index];
@@ -53,7 +52,6 @@ export default defineComponent({
 
 
     let jumpToPage = (view) => {
-
       router.push({
         name: view
       })

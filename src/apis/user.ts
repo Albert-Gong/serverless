@@ -4,14 +4,33 @@
  * @changeLogs
  */
 
+// @ts-ignore
 import request from '@/utils/request';
 // @ts-ignore
 import Qs from "qs";
 
-/** request token **/
-export function analyse_sentiment(sentence) {
+/** test **/
+export function test(data: object) {
     return request({
-        url: 'https://f1cbbbb3abf244d3b7dbe955451b5c7c.apig.cn-north-4.huaweicloudapis.com/sentiment_analysis',
+        url: '/sentiment_analysis',
+        method: 'post',
+        data: Qs.stringify(data)
+    })
+}
+
+/** huawei_func **/
+export function huawei_func(data: object) {
+    return request({
+        url: '/preprocess_apig',
+        method: 'post',
+        data: Qs.stringify(data)
+    })
+}
+
+/** analyse_sentiment **/
+export function analyse_sentiment(sentence: string) {
+    return request({
+        url: 'sentiment_analysis',
         method: 'post',
         params: {
             "sentence": sentence,

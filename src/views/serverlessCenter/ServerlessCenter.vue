@@ -21,6 +21,8 @@ import Navigation from "@/components/navigation/Navigation.vue"
 import Overview from "@/components/serverlessCenter/Overview.vue"
 import {services} from "../../utils/basic";
 import {useRouter} from "vue-router";
+import {test} from "../../apis/user"
+import {fromBase64} from "js-base64";
 
 export default defineComponent({
   name: '',
@@ -44,10 +46,21 @@ export default defineComponent({
       }
     }, {immediate: true})
 
+    let goToApig = ()=>{
+      let data = {
+        "cmd" : "hello, nice to see you",
+        "param": '123'
+      }
+      test(data).then(res=>res.data).then(data=>{
+        console.log(unescape(data))
+      })
+    }
+
 
     return {
       services_info,
-      is_center_page
+      is_center_page,
+      goToApig
     }
   }
 })

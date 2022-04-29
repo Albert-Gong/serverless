@@ -5,24 +5,25 @@
  */
 
 import museum from "@/assets/images/museum.png"
+import ai from "@/assets/images/ai.jpeg"
 
 const services = [
     {
         name: "Preprocess",
-        description: `Preprocess part is to preprocess data for data analysis. Here we provide over 20 apis for 
-                      you to call. It is convenient as you only need to upload a txt or csv file containing the data
-                      you want to process. With the help the Huawei serverless apis, you can get your answer in no time`,
-        image: museum,
+        description: `The Preprocess section is to preprocess data for data analysis. Here we provide 20 apis for 
+                      you to use. It is convenient as you only need to upload a txt or csv file containing the data
+                      you want to process. With the help the Huawei function graphs, you can get your answer in no time`,
+        image: ai,
     },
     {
         name: "AI reference",
-        description: "You can use ai models to do some basic tasks such sentiment analysis",
-        image: museum,
+        description: "You can use ai models to do refence tasms such sentiment analysis",
+        image: ai,
     },
     {
         name: "Pipeline",
-        description: "To do",
-        image: museum,
+        description: "Here we use function graphs to construct cascading function calls",
+        image: ai,
     }
 ]
 

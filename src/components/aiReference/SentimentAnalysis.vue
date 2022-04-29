@@ -13,22 +13,19 @@
     <div class="sentiment-result-container">
 
       <div>
-        neg {{ results[0] }}
+        neg {{ neg}}
       </div>
       <div>
-        neu {{ results[1] }}
+        neu {{ neu}}
       </div>
       <div>
-        pos {{ results[2] }}
+        pos {{ pos }}
       </div>
       <div>
-        compound {{ results[3] }}
+        compound {{ compound}}
       </div>
-
-
       <div></div>
       <div></div>
-
     </div>
   </div>
 </template>
@@ -36,78 +33,32 @@
 <script>
 import {computed, defineComponent, ref} from 'vue'
 import {ObsClient} from "../../huaweiobs/index"
+import {analyse_sentiment} from "../../apis/user";
 
 export default defineComponent({
   name: 'SentimentAnalysis',
 
   setup() {
-    let sentence = ref("")
-    let results = ref([])
 
+    let sentence = ref("")
+    let neg = ref("0"), neu = ref("0"), pos = ref("0"), compound = ref("0")
 
     let analyzeSentiment = () => {
-      let ak = 'VFQ6DYBAKATE373J1OSX'
-      let sk = 'r97RMrH2xqEbYSSoDR43OEtMgAdSu6AmuPPCMiQg'
-      let server = 'https://obs.cn-north-4.myhuaweicloud.com'
-
-      let obsClient = new ObsClient({
-        access_key_id: ak,
-        secret_access_key: sk,
-        server: server
-      });
-
-      obsClient.putObject({
-        Bucket: 'serverless-ai-stage-0',
-        Key: "sentiment_sentence.txt",
-        Body: sentence.value
-      }, function (err, result) {
-        if (err) {
-          console.error('Error-->' + err);
-        } else {
-          if (result.CommonMsg.Status < 300) {
-            if (result.InterfaceResult) {
-              console.log('Status-->' + result.CommonMsg.Status);
-              console.log('RequestId-->' + result.CommonMsg.RequestId);
-
-              function query() {
-                obsClient.getObject({
-                  Bucket: 'serverless-ai-stage-1',
-                  Key: "sentiment_sentence.txt"
-                }, function (err, result) {
-                  if (err) {
-                    console.error('Error-->' + err);
-                  } else {
-                    console.log('Status-->' + result.CommonMsg.Status);
-                    if (result.CommonMsg.Status < 300 && result.InterfaceResult) {
-                      let str_obj = result.InterfaceResult.Content
-                      console.log(str_obj)
-                      results.value = []
-                      str_obj.slice(1, -1).split(",").forEach(e => {
-                        let ele = e.slice(e.indexOf(":") + 1)
-                        results.value.push(ele)
-                      })
-                      console.log(results)
-                    }
-                  }
-                })
-              }
-
-              setTimeout(query, 1000)
-
-            }
-          } else {
-            console.log('Status-->' + result.CommonMsg.Status);
-            console.log('Code-->' + result.CommonMsg.Code);
-            console.log('RequestId-->' + result.CommonMsg.RequestId);
-          }
-        }
-      });
+      analyse_sentiment(sentence.value).then(res=>JSON.parse(res.data)).then(data=>{
+        neg.value = data['neg']
+        neu.value = data['neu']
+        pos.value = data['pos']
+        compound.value = data['compound']
+      })
     }
 
 
     return {
       sentence,
-      results,
+      pos,
+      neu,
+      neg,
+      compound,
       analyzeSentiment
     }
   }

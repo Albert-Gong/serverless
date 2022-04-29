@@ -21,14 +21,14 @@ export default ({command}: ConfigEnv): UserConfigExport => {
             host: 'localhost',
             port: 8090,
             open: true,
-            // proxy: {
-            //     '/cj': {
-            //         target: 'http://43.138.10.182:8081/api',
-            //         changeOrigin: true,
-            //         ws: true,
-            //         rewrite: path => path.replace(/^\/cj/, '')
-            //     }
-            // }
+            proxy: {
+                '/hw': {
+                    target: 'https://a6112d413d5346b29a888dfc8bfb3a4e.apig.cn-north-4.huaweicloudapis.com',
+                    changeOrigin: true,
+                    ws: true,
+                    rewrite: path => path.replace(/^\/hw/, '')
+                }
+            }
         },
         build: {
             rollupOptions: {

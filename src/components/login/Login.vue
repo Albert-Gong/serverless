@@ -7,8 +7,6 @@
   <div id="login-container">
     <div class="logo-image">
     </div>
-    <!--    <Logo></Logo>-->
-
     <div class="row-container">
       <div class="prefix">
         AK
@@ -49,21 +47,6 @@
       </div>
     </div>
 
-    <div class="row-container">
-      <div class="prefix">
-        Token
-      </div>
-      <div class="input-box">
-        <el-input
-            size="default"
-            v-model="input_token"
-            placeholder="input secret key"
-        ></el-input>
-      </div>
-    </div>
-
-
-    {{ name }}
     <div class="button-group">
       <el-link type="success" class="button" @click="saveConfiguration">
         Save
@@ -78,10 +61,11 @@
 </template>
 
 <script>
-import {defineComponent, ref, computed} from 'vue'
+import {defineComponent, ref, computed, onMounted} from 'vue'
 import {useStore} from 'vuex';
 import {useRouter} from "vue-router";
 import {analyse_sentiment} from "../../apis/user";
+import {ElMessage} from "element-plus";
 // import Logo from "@/components/logo/Logo.vue";
 
 
@@ -91,41 +75,52 @@ export default defineComponent({
     // Logo
   },
   setup() {
-
     let store = useStore();
     let router = useRouter();
 
-    let input_ak = ref("")
-    let input_sk = ref("")
-    let input_server = ref("")
-    let input_token = ref("")
+    let ak = "", sk = "", server = ""
+    onMounted(() => {
+      ak = computed(() => store.getters['user/getAk'])
+      sk = computed(() => store.getters['user/getSk'])
+      server = computed(() => store.getters['user/getServer'])
+      console.log(ak.value)
+    })
+    let input_ak = ref(ak)
+    let input_sk = ref(sk)
+    let input_server = ref(server)
 
-    const name = computed(() => store.getters['user/getName'])
 
     let saveConfiguration = () => {
       let data = {
         "input_ak": input_ak.value,
         "input_sk": input_sk.value,
         "input_server": input_server.value,
-        "input_token": input_token.value,
       }
-      store.dispatch("user/configure", data).then(res => {
-        console.log("ok", data)
-        analyse_sentiment("I am superman").then(res => {
-          console.log(res)
-        })
+      store.dispatch('user/configure', data).then(res => {
+        if (res === 'OK') {
+          ElMessage({
+            message: 'Successfully finish the configuration',
+            type: 'success',
+          })
+        }
 
-        // store.dispatch('user/requestToken', data).then(res=>{
-        //   console.log(res)
-        // })
-      }).catch(err => console.log(err));
+      }).catch(e => {
+        console.log(e)
+      })
+
     }
 
     let resetConfiguration = () => {
       store.dispatch("user/reset").then(res => {
-        console.log(res)
-      }).catch(err => console.log(err));
-
+        if (res === 'OK') {
+          ElMessage({
+            message: 'Successfully reset the configuration',
+            type: 'success',
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+      });
     }
 
     let goToServerless = () => {
@@ -138,8 +133,6 @@ export default defineComponent({
       input_ak,
       input_sk,
       input_server,
-      input_token,
-
       name,
       saveConfiguration,
       resetConfiguration,
@@ -160,7 +153,7 @@ $imageURL: "../../assets/images/logo.png";
   border-radius: 10px;
   align-self: center;
   width: 350px;
-  height: 425px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;

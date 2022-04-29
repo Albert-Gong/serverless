@@ -4,6 +4,7 @@
  * @changeLogs
  */
 
+// @ts-ignore
 import obsclient from "./obs.js"
 
 let ObsClient = obsclient

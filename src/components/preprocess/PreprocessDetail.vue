@@ -7,14 +7,19 @@
   <div id="preprocess-detail-container">
     <div class="detail-des-container">
       <h3 class="api-name">
-        {{ detail.api_name }}
+        {{ detail["api_name"] }}
       </h3>
       <p class="api-des">
-        {{ detail.api_des }}
+        {{ detail["api_des"]}}
       </p>
     </div>
     <div class="upload-download-container">
       <div class="upload-container">
+
+        <div class="params-container">
+          <div class="params"> params</div>
+          <el-input v-model="param"></el-input>
+        </div>
         <div class="caption">Please upload a file</div>
         <el-upload
             action=""
@@ -56,11 +61,12 @@
 <script lang="ts">
 import {defineComponent, onMounted, ref, computed} from 'vue'
 import {useRoute} from "vue-router";
-import type {UploadInstance, UploadProps, UploadRawFile} from 'element-plus'
+import type {UploadInstance, UploadProps, UploadRawFile, UploadUserFile} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {ObsClient} from "../../huaweiobs/index"
 import {useStore} from "vuex"
 import {preprocess_apis} from "../../enums/preprocess";
+import {huawei_func} from "../../apis/user";
 
 
 export default defineComponent({
@@ -69,7 +75,8 @@ export default defineComponent({
     let store = useStore();
     let route = useRoute();
     let p_id = ref(0);
-    let detail = ref({});
+    let detail :any = ref({});
+    let param = ref("");
 
     let res_text = ref("");
     let dynamic_download_url = ref("");
@@ -93,20 +100,27 @@ export default defineComponent({
     }
 
 
+
+
     const submitUpload = () => {
+      let ak = store.getters['user/getAk']
+      let sk = store.getters['user/getSk']
+      let server = store.getters['user/getServer']
+      console.log(ak, sk, server)
+
       if (file_list.value.length > 0) {
-        let file = file_list.value[0]
-        console.log("File:", file.name)
+        let file :any = file_list.value[0]
         let reader = new FileReader()
-        reader.readAsText(file.raw)
+        reader.readAsText(file["raw"])
         reader.onload = (event: any) => {
           let file_content = event.target.result
+          let ak = store.getters['user/getAk']
+          let sk = store.getters['user/getSk']
+          let server = store.getters['user/getServer']
+          console.log(ak, sk, server)
 
-
-          let ak = 'VFQ6DYBAKATE373J1OSX'
-          let sk = 'r97RMrH2xqEbYSSoDR43OEtMgAdSu6AmuPPCMiQg'
-          let server = 'https://obs.cn-north-4.myhuaweicloud.com'
-
+          file_content = detail.value["api_name"] + ',' + param.value + '\n' + file_content
+          console.log(file_content)
 
           let obsClient = new ObsClient({
             access_key_id: ak,
@@ -116,38 +130,39 @@ export default defineComponent({
 
           obsClient.putObject({
             Bucket: 'serverless-preprocess-stage-0',
-            Key: file.name,
+            Key: file['name'],
             Body: file_content
-          }, function (err, result) {
+          }, function (err : any, result : any) {
             if (err) {
-              console.error('Error-->' + err);
+              console.error('Error:' + err);
             } else {
               if (result.CommonMsg.Status < 300) {
                 if (result.InterfaceResult) {
-                  console.log('Status-->' + result.CommonMsg.Status);
-                  console.log('RequestId-->' + result.CommonMsg.RequestId);
-                  (() => {
+
+                  let getResult = function () {
                     obsClient.getObject({
                       Bucket: 'serverless-preprocess-stage-1',
-                      Key: file.name,
-                    }, function (err, result) {
+                      Key: file['name'],
+                    }, function (err:any, result:any) {
                       if (err) {
                         console.error('Error-->' + err);
                       } else {
                         console.log('Status-->' + result.CommonMsg.Status);
                         if (result.CommonMsg.Status < 300 && result.InterfaceResult) {
+                          console.log(result.InterfaceResult.Content)
                           res_text.value = result.InterfaceResult.Content
-
                         }
                       }
                     })
-                  })();
-                  (() => {
+                  }
+
+                  let getFile = function () {
+                    console.log(file['name'])
                     obsClient.getObject({
                       Bucket: 'serverless-preprocess-stage-1',
-                      Key: file.name,
+                      Key: file['name'],
                       SaveByType: 'file'
-                    }, function (err, result) {
+                    }, function (err :any, result:any) {
                       if (err) {
                         console.error('Error-->' + err);
                       } else {
@@ -155,12 +170,13 @@ export default defineComponent({
                         if (result.CommonMsg.Status < 300 && result.InterfaceResult) {
                           // console.log('Download Path:');
                           dynamic_download_url.value = result.InterfaceResult.Content.SignedUrl
-                          // console.log();
+
                         }
                       }
                     })
-                  })()
-
+                  }
+                  setTimeout(getResult, 3000)
+                  setTimeout(getFile, 3200)
                 }
               } else {
                 console.log('Status-->' + result.CommonMsg.Status);
@@ -169,6 +185,9 @@ export default defineComponent({
               }
             }
           });
+          res_text.value = ''
+          param.value = ''
+          file_list.value = []
         }
       }
     }
@@ -179,6 +198,7 @@ export default defineComponent({
       res_text,
       detail,
       dynamic_download_url,
+      param,
       handleExceed,
       submitUpload,
     }
@@ -224,7 +244,18 @@ export default defineComponent({
       flex: 0 1 250px;
       display: flex;
       flex-direction: column;
-      align-items: left;
+
+
+      .params-container {
+        display: flex;
+        width: 220px;
+
+        .params {
+          flex: 1 0 80px;
+          text-align: left;
+        }
+
+      }
 
       .caption {
         text-align: left;

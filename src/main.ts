@@ -18,3 +18,4 @@ app.use(ElementPlus, {size: 'small', zIndex: 3000})
 app.use(router)
 app.use(store)
 app.mount('#app')
+
