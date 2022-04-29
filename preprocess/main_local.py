@@ -6,16 +6,14 @@ import json
 
 
 if __name__ == '__main__':
-    # ak = 'VFQ6DYBAKATE373J1OSX'
-    # sk = 'r97RMrH2xqEbYSSoDR43OEtMgAdSu6AmuPPCMiQg'
-    ak = 'TXKLMML0EK5IMB3MRGES'
-    sk = 'GTRm8WLamcrpFGmuKtHiYU4YBPFiDKFvqbdTSXR4'
+    ak = '***'
+    sk = '***'
     server = "obs.cn-north-4.myhuaweicloud.com"
 
-    downloadBucket = "serverless-preprocess-stage-0"
-    uploadBucket = "pre-fillmissing"
+    downloadBucket = "***"
+    uploadBucket = "***"
 
-    objectKey = 'nan.csv'
+    objectKey = '***'
     localFile = "./tmp/" + objectKey
 
     config = {

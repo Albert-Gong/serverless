@@ -13,8 +13,8 @@ def handler(event, context):
     sk = context.getUserData("sk")
     server = "obs.cn-north-4.myhuaweicloud.com"
 
-    downloadBucket = "serverless-preprocess-stage-0"
-    uploadBucket = "serverless-preprocess-stage-1"
+    downloadBucket = "***"
+    uploadBucket = "***"
 
     objectKey = objName
     localFile = "/tmp/" + objectKey
